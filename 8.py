@@ -1,18 +1,15 @@
-class ReversedSequence:
-    def __init__(self, sequence) -> None:
-        self.sequence = sequence
+class SparseArray:
+    def __init__(self, default) -> None:
+        self.default = default
+        self.temp = [self.default]
+        self.array = []
 
-    def __len__(self):
-        return len(self.sequence)
-    
+    def __setitem__(self, key, value):
+        self.array.extend(self.temp * (key - len(self.array) + 1))
+        self.array[key] = value
+
     def __getitem__(self, key):
-        if isinstance(key, slice):
-            return ReversedSequence(self.sequence[key])
-        if not isinstance(key, int):
-            raise TypeError('Индекс должен быть целым числом')
-        if key < 0 or key >= len(self.sequence):
-            raise IndexError('Неверный индекс')
-        return self.sequence[::-1][key]
-    
-    def __iter__(self):
-        yield from self.sequence[::-1]
+        if key >= len(self.array):
+            return self.default
+        return self.array[key]
+
