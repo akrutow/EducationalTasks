@@ -1,15 +1,21 @@
-class SparseArray:
-    def __init__(self, default) -> None:
-        self.default = default
-        self.temp = [self.default]
-        self.array = []
+class CyclicList:
+    def __init__(self, iterable=None):
+        if iterable is None:
+            self.iterable = []
+        else:
+            self.iterable = iterable.copy()
 
-    def __setitem__(self, key, value):
-        self.array.extend(self.temp * (key - len(self.array) + 1))
-        self.array[key] = value
+    def append(self, obj):
+        return self.iterable.append(obj)
 
+    def pop(self, i=None):
+        if i is None:
+            return self.iterable.pop(-1)
+        else:
+            return self.iterable.pop(i)
+
+    def __len__(self):
+        return len(self.iterable)
+    
     def __getitem__(self, key):
-        if key >= len(self.array):
-            return self.default
-        return self.array[key]
-
+        return self.iterable[key % len(self.iterable)]
