@@ -1,21 +1,39 @@
-class BasicPlan:
-    can_stream = True
-    can_download = True
-    has_SD = True
-    has_HD = False
-    has_UHD = False
-    num_of_devices = 1
-    price = '8.99$'
+text = '  double  spaced  words  '
 
+# можно было либо так
+def reverse_words(str):
+    newStr = []
+    for i in str.split(' '):
+        newStr.append(i[::-1])
+    return ' '.join(newStr)
 
-class SilverPlan(BasicPlan):
-    has_HD = True
-    num_of_devices = 2
-    price = '12.99$'
+# либо вообще еще проще вот так
+def reverse_words(str):
+    return ' '.join(s[::-1] for s in str.split(' '))
 
+# мое решение было неверно, потому что я не передавал в сплит пустую строку :фейспалм:
+# поэтому пришлось выкатывать вот такую простыню, это жесть
 
-class GoldPlan(BasicPlan):
-    has_HD = True
-    has_UHD = True
-    num_of_devices = 4
-    price = '15.99$'
+def reverse_words(text):
+    space = 0
+    letter = 0
+    temp = ''
+    result = ''
+    for i in text:
+        if i == ' ':
+            space += 1
+        else:
+            letter += 1
+            temp += i
+        if space > 0:
+            if letter > 0:
+                result += temp[::-1]
+                result += ' '
+                space = 0
+                temp = ''
+                letter = 0
+            else:
+                result += ' '
+                space = 0
+    result += temp[::-1]
+    return result
