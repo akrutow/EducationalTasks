@@ -1,49 +1,58 @@
-from contextlib import contextmanager
-import os
+class Character:
+    def __init__(self, name, damage):
+        self.name = name
+        self._damage = damage
+        self._health = 100
 
-@contextmanager
-def safe_write(filename):
-    # Сохраняем исходное содержимое файла, если он существует
-    try:
-        with open(filename, 'r', encoding='utf-8') as f:
-            original = f.read()
-    except FileNotFoundError:
-        original = None
+    def attack(self, target):
+        if hasattr(target, 'take_damage'):
+            target.take_damage(self._damage)
 
-    file = None
-    try:
-        file = open(filename, 'w', encoding='utf-8')
-        yield file
-    except Exception as e:
-        # Закрываем файл, если он открыт
-        if file and not file.closed:
-            file.close()
+    def take_damage(self, amount):
+        self._health -= amount
 
-        # Восстанавливаем исходное состояние
-        if original is not None:
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(original)
-        else:
-            # Если файла не было, удаляем созданный пустой файл
-            try:
-                os.remove(filename)
-            except FileNotFoundError:
-                pass
-
-        # Выводим сообщение об исключении
-        print(f"Во время записи в файл было возбуждено исключение {type(e).__name__}")
-    else:
-        # Если исключений не было — просто закрываем файл
-        if file and not file.closed:
-            file.close()
-
-
-with safe_write('under_tale.txt') as file:
-    file.write('Тень от руин нависает над вами, наполняя вас решительностью\n')
+    def get_status(self):
+        return f'Имя: {self.name}, Здоровье: {self._health}'
     
-with safe_write('under_tale.txt') as file:
-    print('Под весёлый шорох листвы вы наполняетесь решительностью', file=file, flush=True)
-    raise ValueError
 
-with open('under_tale.txt', encoding='utf-8') as file:
-    print(file.read())
+class Warrior(Character):
+    def __init__(self, name, damage, armor):
+        super().__init__(name, damage)
+        self.armor = armor
+
+    def take_damage(self, amount):
+        if self.armor < amount:
+            self._health -= (amount - self.armor)
+
+
+class Mage(Character):
+    def __init__(self, name, damage, mana):
+        super().__init__(name, damage)
+        self.mana = mana
+
+    def attack(self, target):
+        if self.mana >= 10:
+            self.mana -= 10
+            super().attack(target)
+
+
+# Создаем персонажей
+warrior = Warrior("Конан", 15, 5) # Урон 15, Броня 5
+mage = Mage("Раистлин", 20, 100) # Урон 20, Мана 100
+
+print(warrior.get_status())
+print(mage.get_status())
+print("--- Битва ---")
+
+# Маг атакует воина
+mage.attack(warrior)
+print(warrior.get_status()) # Воин должен получить 15 урона (20 - 5 брони)
+
+# Воин атакует мага
+warrior.attack(mage)
+print(mage.get_status()) # Маг должен получить 15 урона
+
+# Проверка логики мага
+mage.mana = 5 # Устанавливаем мало маны
+mage.attack(warrior)
+print(warrior.get_status()) # Здоровье воина не должно измениться

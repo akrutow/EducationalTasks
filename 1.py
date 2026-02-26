@@ -1,11 +1,27 @@
-class Thermostat:
-    def __init__(self, temp) -> None:
-        self._temperature = temp
+class Publication:
+    def __init__(self, title, author, year):
+        self.title = title
+        self._author = author
+        self._year = year
 
-    def get_temperature(self):
-        return self._temperature
+    def get_info(self):
+        return f'"{self.title}" ({self._author}, {self._year})'
     
-    def set_temperature(self, new_temp):
-        if isinstance(new_temp, int):
-            if 0 <= new_temp <= 100:
-                self._temperature = new_temp
+
+class Book(Publication):
+    def __init__(self, title, author, year, isbn):
+        super().__init__(title, author, year)
+        self.isbn = isbn
+
+    def get_info(self):
+        return f'"{self.title}" ({self._author}, {self._year}), ISBN: {self.isbn}'
+    
+
+class Magazine(Publication):
+    def __init__(self, title, editor, year, issue_number):
+        super().__init__(title, editor, year)
+        self.issue_number = issue_number
+
+    def get_info(self):
+        return f'"{self.title}" (Ред. {self._author}, {self._year}), Выпуск №{self.issue_number}'
+    
