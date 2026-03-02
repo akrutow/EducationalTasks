@@ -1,14 +1,19 @@
-class GameObject:
-    __slots__ = ('x', 'y')
+class Person:
+    def __init__(self, name, surname):
+        print('Вызов метода __init__() класса Person')
+        self.name = name
+        self.surname = surname
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+class Student(Person):
+    def __init__(self, name, surname):
+        print('Вызов метода __init__() класса Student')
+        self.name = name
+        self.surname = surname
+
+class StanfordStudent(Student):
+    def __init__(self, name, surname):
+        super().__init__(name, surname)
+        self.university = 'Stanford'
 
 
-class Player(GameObject):
-    __slots__ = ('nickname', )
-
-    def __init__(self, x, y, nickname):
-        super().__init__(x, y)
-        self.nickname = nickname
+student = StanfordStudent('Elon', 'Musk')
